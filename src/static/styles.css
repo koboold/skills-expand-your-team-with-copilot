@@ -190,6 +190,43 @@ section h3 {
   justify-content: center;
 }
 
+/* Share buttons */
+.share-buttons {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-light);
+}
+
+.share-button {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+}
+
+.share-button:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.share-button .share-icon {
+  font-size: 0.9rem;
+}
+
 /* Activity Tag */
 .activity-tag {
   position: absolute;
@@ -663,4 +700,47 @@ footer {
 
 #logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Message styles */
+.message {
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.message.success {
+  background-color: var(--success-light);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.message.error {
+  background-color: var(--error-light);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.message.info {
+  background-color: var(--info-light);
+  color: var(--info);
+  border: 1px solid var(--info);
+}
+
+.message.warning {
+  background-color: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+}
+
+/* Auth notice */
+.auth-notice {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  padding: 8px;
+  background-color: var(--background);
+  border-radius: 4px;
 }

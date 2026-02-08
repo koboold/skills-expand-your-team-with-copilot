@@ -552,6 +552,20 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("")}
         </ul>
       </div>
+      <div class="share-buttons">
+        <button class="share-button" data-activity="${name}" data-platform="twitter" title="Share on Twitter">
+          <span class="share-icon">🐦</span>
+        </button>
+        <button class="share-button" data-activity="${name}" data-platform="facebook" title="Share on Facebook">
+          <span class="share-icon">📘</span>
+        </button>
+        <button class="share-button" data-activity="${name}" data-platform="email" title="Share via Email">
+          <span class="share-icon">✉️</span>
+        </button>
+        <button class="share-button" data-activity="${name}" data-platform="copy" title="Copy Link">
+          <span class="share-icon">🔗</span>
+        </button>
+      </div>
       <div class="activity-card-actions">
         ${
           currentUser
@@ -575,6 +589,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteButtons = activityCard.querySelectorAll(".delete-participant");
     deleteButtons.forEach((button) => {
       button.addEventListener("click", handleUnregister);
+    });
+
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", handleShare);
     });
 
     // Add click handler for register button (only when authenticated)
@@ -797,6 +817,98 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     );
+  }
+
+  // Handle social sharing
+  function handleShare(event) {
+    const activityName = event.currentTarget.dataset.activity;
+    const platform = event.currentTarget.dataset.platform;
+    const activity = allActivities[activityName];
+
+    if (!activity) {
+      showMessage("Activity not found", "error");
+      return;
+    }
+
+    // Build the share content with activity-specific URL
+    const activityUrl = `${window.location.origin}${
+      window.location.pathname
+    }#activity=${encodeURIComponent(activityName)}`;
+    const shareText = `Check out ${activityName} at Mergington High School! ${activity.description}`;
+    const shareTitle = `${activityName} - Mergington High School`;
+
+    switch (platform) {
+      case "twitter":
+        // Twitter/X share
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+          shareText
+        )}&url=${encodeURIComponent(activityUrl)}`;
+        window.open(twitterUrl, "_blank", "width=550,height=420");
+        break;
+
+      case "facebook":
+        // Facebook share
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          activityUrl
+        )}`;
+        window.open(facebookUrl, "_blank", "width=550,height=420");
+        break;
+
+      case "email":
+        // Email share
+        const emailSubject = encodeURIComponent(shareTitle);
+        const emailBody = encodeURIComponent(
+          `${shareText}\n\nVisit: ${activityUrl}`
+        );
+        window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
+        break;
+
+      case "copy":
+        // Copy link to clipboard with fallback
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(activityUrl)
+            .then(() => {
+              showMessage("Link copied to clipboard!", "success");
+            })
+            .catch((err) => {
+              console.error("Failed to copy link:", err);
+              fallbackCopyToClipboard(activityUrl);
+            });
+        } else {
+          fallbackCopyToClipboard(activityUrl);
+        }
+        break;
+
+      default:
+        showMessage("Unknown sharing platform", "error");
+    }
+  }
+
+  // Fallback method for copying to clipboard
+  function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      const successful = document.execCommand("copy");
+      if (successful) {
+        showMessage("Link copied to clipboard!", "success");
+      } else {
+        showMessage("Failed to copy link", "error");
+      }
+    } catch (err) {
+      console.error("Fallback: Failed to copy", err);
+      showMessage("Failed to copy link", "error");
+    }
+
+    document.body.removeChild(textArea);
   }
 
   // Show message function
