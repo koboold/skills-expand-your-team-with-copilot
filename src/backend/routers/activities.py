@@ -42,7 +42,7 @@ def get_activities(
         query["schedule_details.end_time"] = {"$lte": end_time}
     
     if difficulty:
-        if difficulty.lower() == "all":
+        if difficulty == "All":
             # "All" means activities without a specified difficulty
             query["difficulty"] = {"$exists": False}
         else:
