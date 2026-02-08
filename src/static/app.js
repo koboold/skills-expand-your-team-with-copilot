@@ -1,4 +1,35 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Theme toggle functionality
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeIcon = document.getElementById("theme-icon");
+  
+  // Helper function to update theme icon
+  function updateThemeIcon(isDarkMode) {
+    if (themeIcon) {
+      themeIcon.textContent = isDarkMode ? "☀️" : "🌙";
+    }
+  }
+  
+  // Only initialize theme toggle if the elements exist
+  if (themeToggle && themeIcon) {
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem("theme") || "light";
+    if (currentTheme === "dark") {
+      document.body.classList.add("dark-mode");
+      updateThemeIcon(true);
+    }
+    
+    // Toggle theme when button is clicked
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      
+      // Update icon and save preference
+      const isDarkMode = document.body.classList.contains("dark-mode");
+      updateThemeIcon(isDarkMode);
+      localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+    });
+  }
+
   // DOM elements
   const activitiesList = document.getElementById("activities-list");
   const messageDiv = document.getElementById("message");
