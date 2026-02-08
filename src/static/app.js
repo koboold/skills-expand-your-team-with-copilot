@@ -830,8 +830,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Build the share content
-    const activityUrl = `${window.location.origin}${window.location.pathname}`;
+    // Build the share content with activity-specific URL
+    const activityUrl = `${window.location.origin}${
+      window.location.pathname
+    }#activity=${encodeURIComponent(activityName)}`;
     const shareText = `Check out ${activityName} at Mergington High School! ${activity.description}`;
     const shareTitle = `${activityName} - Mergington High School`;
 
@@ -862,21 +864,51 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
 
       case "copy":
-        // Copy link to clipboard
-        navigator.clipboard
-          .writeText(activityUrl)
-          .then(() => {
-            showMessage("Link copied to clipboard!", "success");
-          })
-          .catch((err) => {
-            console.error("Failed to copy link:", err);
-            showMessage("Failed to copy link", "error");
-          });
+        // Copy link to clipboard with fallback
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(activityUrl)
+            .then(() => {
+              showMessage("Link copied to clipboard!", "success");
+            })
+            .catch((err) => {
+              console.error("Failed to copy link:", err);
+              fallbackCopyToClipboard(activityUrl);
+            });
+        } else {
+          fallbackCopyToClipboard(activityUrl);
+        }
         break;
 
       default:
         showMessage("Unknown sharing platform", "error");
     }
+  }
+
+  // Fallback method for copying to clipboard
+  function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      const successful = document.execCommand("copy");
+      if (successful) {
+        showMessage("Link copied to clipboard!", "success");
+      } else {
+        showMessage("Failed to copy link", "error");
+      }
+    } catch (err) {
+      console.error("Fallback: Failed to copy", err);
+      showMessage("Failed to copy link", "error");
+    }
+
+    document.body.removeChild(textArea);
   }
 
   // Show message function
